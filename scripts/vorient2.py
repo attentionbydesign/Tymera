@@ -1,9 +1,11 @@
-from chimera import openModels, Molecule, UserError, numpyArrayFromAtoms, Point, Vector
+from chimera import Xform, openModels as om, Molecule, UserError, numpyArrayFromAtoms, Point, Vector
 import numpy as np
+from VolumeViewer import volume
 
 #####_DEFINE FUNCTIONS_#####----------------
 #rotation matrix
 def get_rmx(vol,invert=False):
+    from chimera import Xform
     xf = vol.model_transform()
     if invert == True:
         xf.invert()
@@ -15,12 +17,14 @@ def get_rmx(vol,invert=False):
 
 #origin correction vector for translation matrix
 def oricrv(vol):
-        vbx = vol.bbox()[1]
-        vc = vbx.center()
-        return(Point() - vc)
+    from chimera import Point
+    vbx = vol.bbox()[1]
+    vc = vbx.center()
+    return(Point() - vc)
 
 #translation matrix
 def get_tmx(vol,invert=False):
+    from chimera import Xform
     xf = vol.model_transform()
     if invert == True:
         xf.invert()
