@@ -1,10 +1,3 @@
-from chimera import openModels as om, Molecule, UserError, numpyArrayFromAtoms, Point
-from chimera import Xform, Point, cross, angle, Vector
-
-
-
-#from chimera import Xform, Point, cross, angle, Vector
-
 def actopen():
     from chimera import openModels as om, runCommand as rc
     if om.list() == []:
@@ -55,6 +48,7 @@ def orient_run(mol):
 
 
 def orient(mdl):
+    from chimera import openModels
     if mdl == None and chimera.selection.currentMolecules() != []:
         mdls = chimera.selection.currentMolecules()
         for mol in mdls:
@@ -138,6 +132,7 @@ def calculate_similarity(seq1, seq2):
     return similarity
 
 def get_faco(mol):
+    chain_key = r2d('cky.txt')
     chain_objs = mol.sequences()
     for cobj in chain_objs:
         cseq = str(cobj)
