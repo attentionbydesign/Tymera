@@ -11,6 +11,7 @@ def actopen():
                 rc('open 3j8i')
   
 def orient_run(mol):
+    from chimera import numpyArrayFromAtoms
     coords = numpyArrayFromAtoms(mol.atoms, xformed=True)
     from StructMeasure import bestLine
     centroidPt, majorVec, centroidArray, majorArray, centered, vals, vecs = \
@@ -48,7 +49,7 @@ def orient_run(mol):
 
 
 def orient(mdl):
-    from chimera import openModels
+    from chimera import openModels, Molecule
     if mdl == None and chimera.selection.currentMolecules() != []:
         mdls = chimera.selection.currentMolecules()
         for mol in mdls:
@@ -67,6 +68,7 @@ def orient(mdl):
 
 ###if y component of actin axis is negative, then flip the model upside down to correct###
 def ypolcorr():
+    from chimera import openModels as om, Xform
     av = fav()
     if av.y < 0:
         for mol in om.list():
@@ -196,4 +198,3 @@ def fav():
 actopen()
 orient('all')
 ypolcorr()
-            
