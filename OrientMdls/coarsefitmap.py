@@ -1,0 +1,1 @@
+#uses fitmap to coarsely align models to maps (globfit)
