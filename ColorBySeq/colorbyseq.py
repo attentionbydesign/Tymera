@@ -1,41 +1,6 @@
 import chimera
-from chimera import openModels, runCommand as rc
-from chimera.colorTable import getColorByName
-
-def r2d(filename):
-    result_dict = {}
-    with open(filename, 'r') as file:
-        for line in file:
-            columns = line.split()
-            if len(columns) == 2:
-                key = columns[0]
-                value = columns[1]
-                result_dict[key] = value
-    return result_dict
-    file.close()
-
-def align_sequences(short_seq, long_seq):
-    max_similarity = 0
-    best_alignment = ("", "")
-
-    short_len = len(short_seq)
-    long_len = len(long_seq)
-
-    sass={}
-    for i in range(long_len - short_len + 1):
-        substring = long_seq[i:i + short_len]
-        similarity = sum(1 for a, b in zip(short_seq, substring) if a == b)
-        sass[substring] = similarity
-        
-    best_substring = max(sass, key=sass.get)
-    best_alignment = (short_seq, best_substring)
-    
-    return best_alignment
-
-def calculate_similarity(seq1, seq2):
-    matches = sum(1 for a, b in zip(seq1, seq2) if a == b)
-    similarity = float(matches) / len(seq1) * 100
-    return similarity
+#import sequence_identifier
+from sequence_identifier import *
 
 def color_chain():
     chain = chain_select() #get the chain object that you want to color
@@ -51,7 +16,7 @@ def color_chain():
 
 def identify_seq(cobj,calcsim=False):
     chain_key = {}
-    chain_key = r2d('../ref/chain_key.txt')
+    chain_key = r2d('tymera/ref/chain_key.txt')
     seq1 = str(cobj)
     match_rank = {}
 
@@ -82,11 +47,12 @@ def identify_seq(cobj,calcsim=False):
     if calcsim == True:
         return max_similarity
     else:
-        return best_match
+        return best_match 
 
 def color_by_seq():
+    from chimera.colorTable import getColorByName
     color_key = {}
-    color_key = r2d('../ref/color_key.txt')
+    color_key = r2d('tymera/ref/color_key.txt')
 
     mols_seld = chimera.selection.currentMolecules()
 
