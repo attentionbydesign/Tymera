@@ -1,4 +1,4 @@
 from chimera import runCommand as rc
 
-rc('run vorient2.py')
-rc('run morient3.py')
+rc('run orient_vols.py')
+rc('run orient_mols.py')

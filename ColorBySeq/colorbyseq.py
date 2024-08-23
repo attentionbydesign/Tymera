@@ -51,7 +51,7 @@ def color_chain():
 
 def identify_seq(cobj,calcsim=False):
     chain_key = {}
-    chain_key = r2d('chain_key.txt')
+    chain_key = r2d('../ref/chain_key.txt')
     seq1 = str(cobj)
     match_rank = {}
 
@@ -86,7 +86,7 @@ def identify_seq(cobj,calcsim=False):
 
 def color_by_seq():
     color_key = {}
-    color_key = r2d('color_key.txt')
+    color_key = r2d('../ref/color_key.txt')
 
     mols_seld = chimera.selection.currentMolecules()
 

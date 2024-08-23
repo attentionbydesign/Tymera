@@ -36,7 +36,7 @@ def calculate_similarity(seq1, seq2):
 
 def get_faco(mol):
     print("Running get_faco(mol) for {}".format(mol.name))
-    chain_key = r2d('cky.txt')
+    chain_key = r2d('../ref/chain_key.txt')
     chain_objs = mol.sequences()
     first_actin = None
     for cobj in chain_objs:
