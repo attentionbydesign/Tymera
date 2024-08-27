@@ -1,7 +1,5 @@
-import chimera
-#import sequence_identifier
-from sequence_identifier import *
-
+import os
+tymera_path = os.path.dirname(os.path.dirname(__file__))
 def color_chain():
     chain = chain_select() #get the chain object that you want to color
     cid = chain.chainID #chain ID of that chain object
@@ -16,7 +14,7 @@ def color_chain():
 
 def identify_seq(cobj,calcsim=False):
     chain_key = {}
-    chain_key = r2d('tymera/ref/chain_key.txt')
+    chain_key = r2d(tymera_path+'/ref/chain_key.txt')
     seq1 = str(cobj)
     match_rank = {}
 
@@ -52,7 +50,7 @@ def identify_seq(cobj,calcsim=False):
 def color_by_seq():
     from chimera.colorTable import getColorByName
     color_key = {}
-    color_key = r2d('tymera/ref/color_key.txt')
+    color_key = r2d(tymera_path+'ref/color_key.txt')
 
     mols_seld = chimera.selection.currentMolecules()
 

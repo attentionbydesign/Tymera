@@ -1,16 +1,5 @@
-import chimera
-
-def r2d(filename):
-    result_dict = {}
-    with open(filename, 'r') as file:
-        for line in file:
-            columns = line.split()
-            if len(columns) == 2:
-                key = columns[0]
-                value = columns[1]
-                result_dict[key] = value
-    return result_dict
-    file.close()
+import chimera, os
+tymera_path = os.path.dirname(os.path.dirname(__file__))
 
 def align_sequences(short_seq, long_seq):
     max_similarity = 0
@@ -37,7 +26,7 @@ def calculate_similarity(seq1, seq2):
 
 def identify_seq(cobj,calcsim=False):
     chain_key = {}
-    chain_key = r2d('../ref/chain_key.txt')
+    chain_key = r2d(tymera_path+'/ref/chain_key.txt')
     seq1 = str(cobj)
     match_rank = {}
 

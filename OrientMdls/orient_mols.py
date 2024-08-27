@@ -1,3 +1,5 @@
+import chimera, os
+tymera_path = os.path.dirname(os.path.dirname(__file__))
 
 def r2d(filename):
     result_dict = {}
@@ -36,7 +38,7 @@ def calculate_similarity(seq1, seq2):
 
 def get_faco(mol):
     print("Running get_faco(mol) for {}".format(mol.name))
-    chain_key = r2d('../ref/chain_key.txt')
+    chain_key = r2d(tymera_path+'/ref/chain_key.txt')
     chain_objs = mol.sequences()
     first_actin = None
     for cobj in chain_objs:
@@ -142,7 +144,7 @@ def orient_run(mol):
             print('2nd-Axis onto X:'+"\n\n"+str(rotAxis))
 
 
-def orient_mols():
+def run_om():
     from chimera import openModels, Molecule
     mols = openModels.list(modelTypes=[Molecule])
     for mol in mols:
@@ -151,6 +153,4 @@ def orient_mols():
         orient_run(mol)
         actin_polcorr(mol)
         print ""
-
-orient_mols()
     
