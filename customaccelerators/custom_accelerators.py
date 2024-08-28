@@ -1,5 +1,7 @@
-import chimera
+import chimera, os
 from chimera import openModels
+
+tymera_path = os.path.dirname(os.path.dirname(__file__))
 
 def mol_select():
     sel_mols = chimera.selection.currentMolecules()
@@ -103,6 +105,10 @@ def color_by_protein():
                   for r in res:
                       if r != None:
                           r.ribbonColor = color
+
+def color_by_seq():
+    from tymera.ColorBySeq import colorbyseq,sequence_identifier
+    colorbyseq.color_by_seq()
 
 #-----------------
 def active_select():
@@ -213,7 +219,7 @@ def register_accelerators():
 
   from Accelerators import add_accelerator
   add_accelerator('om','Orient models to global Y-axis and origin', orientmdls)
-  add_accelerator('cb', 'Color chains of selected model by protein type', color_by_protein)
+  add_accelerator('cb', 'Color chains of selected model by protein type', color_by_seq)
   add_accelerator('as', 'Activate only selected model', active_select)
   add_accelerator('sw', 'Toggle show only selected model / show all', shoToggl)
   add_accelerator('vx', 'Set voxelSize of all volumes based on box dimensions', vox_set)

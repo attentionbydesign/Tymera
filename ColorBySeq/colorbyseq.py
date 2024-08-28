@@ -1,5 +1,6 @@
 import os
 tymera_path = os.path.dirname(os.path.dirname(__file__))
+
 def color_chain():
     chain = chain_select() #get the chain object that you want to color
     cid = chain.chainID #chain ID of that chain object
