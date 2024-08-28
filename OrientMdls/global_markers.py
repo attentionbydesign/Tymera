@@ -6,16 +6,16 @@ from chimera import Point, Vector, Xform, numpyArrayFromAtoms, angle, cross
 black = (0,0,0,1)
 axlen = 100
 
+def create_axes():
+    globaxs = VolumePath.Marker_Set('GlobalAxes')
+    if globaxs.markers() == []:
+        globaxs.place_marker((0,0,0),black,5)
+        globaxs.place_marker((axlen,0,0),black,3)
+        globaxs.place_marker((0,axlen,0),black,3)
+        globaxs.place_marker((0,0,axlen),black,3)
+    return globaxs
 
-##globaxs = VolumePath.Marker_Set('GlobalAxes')
-##globaxs.place_marker((0,0,0),black,5)
-##globaxs.place_marker((axlen,0,0),black,3)
-##globaxs.place_marker((0,axlen,0),black,3)
-##globaxs.place_marker((0,0,axlen),black,3)
-
-##if globaxs == None:
-##    create_axes()
-
+globaxs = create_axes()
 gaos = globaxs.molecule.openState
 
 op = globaxs.markers()[0]
