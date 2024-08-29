@@ -27,3 +27,7 @@ For example, I believe color_by_seq() can be run in
 the IDLE with colorbyseq.color_by_seq() after activating
 tymera, since the colorbyseq.py module got imported. 
 
+***in Python 2.7.14 Shell, enter the following reset the default path where scripts are opened to tymera/ if running on Windows:***
+
+import tymera
+os.chdir(os.path.dirname(tymera.__file__))

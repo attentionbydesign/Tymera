@@ -1,5 +1,6 @@
 import chimera, os
 tymera_path = os.path.dirname(os.path.dirname(__file__))
+from tymera.commonfunctions import r2d
 
 def align_sequences(short_seq, long_seq):
     max_similarity = 0

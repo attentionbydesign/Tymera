@@ -1,29 +1,69 @@
-import chimera, os
-tymera_path = os.path.dirname(os.path.dirname(__file__))
-from tymera.ColorBySeq import sequence_identifier
-from tymera.commonfunctions import r2d
 
-##return <chimera.Sequence.StructureSequence object> of the
-##first listed actin chain in the molecule
-##(faco = "first actin chain object")
+def r2d(filename):
+    result_dict = {}
+    with open(filename, 'r') as file:
+        for line in file:
+            columns = line.split()
+            if len(columns) == 2:
+                key = columns[0]
+                value = columns[1]
+                result_dict[key] = value
+    return result_dict
+    file.close()
+
+def align_sequences(short_seq, long_seq):
+    max_similarity = 0
+    best_alignment = ("", "")
+
+    short_len = len(short_seq)
+    long_len = len(long_seq)
+
+    sass={}
+    for i in range(long_len - short_len + 1):
+        substring = long_seq[i:i + short_len]
+        similarity = sum(1 for a, b in zip(short_seq, substring) if a == b)
+        sass[substring] = similarity
+        
+    best_substring = max(sass, key=sass.get)
+    best_alignment = (short_seq, best_substring)
+    
+    return best_alignment
+
+def calculate_similarity(seq1, seq2):
+    matches = sum(1 for a, b in zip(seq1, seq2) if a == b)
+    similarity = float(matches) / len(seq1) * 100
+    return similarity
+
 def get_faco(mol):
-    #print("Running get_faco(mol) for {}".format(mol.name))
-    chain_key = r2d(tymera_path+'/ref/chain_key.txt')
+    print("Running get_faco(mol) for {}".format(mol.name))
+    chain_key = r2d('cky.txt')
     chain_objs = mol.sequences()
     first_actin = None
     for cobj in chain_objs:
-        match = sequence_identifier.identify_seq(cobj)
-        if match == "Actin":
-            first_actin = cobj
-            break
+        cseq = str(cobj)
+        for i in chain_key:
+            s1 = cseq
+            s2 = chain_key[i]
+            if len(s1) > len(s2):
+                short_sequence = s2
+                long_sequence = s1
+            else:
+                short_sequence = s1
+                long_sequence = s2
+            aligned_seq1, aligned_seq2 = align_sequences(short_sequence, long_sequence)
+            similarity = calculate_similarity(aligned_seq1, aligned_seq2)
+            if similarity > 52:
+                print cobj.chainID, i, similarity
+                if i == "Actin":
+                    first_actin = cobj
+                    break
         else:
             continue
         break
     return first_actin
-
-##get vector from barbed to pointed end of first actin chain
+    
 def get_acvec(mol):
-    #print("Running get_acvec(mol) for {}".format(mol.name))
+    print("Running get_acvec(mol) for {}".format(mol.name))
     
     if get_faco(mol):
         faco = get_faco(mol) #chain obj for first actin
@@ -49,19 +89,16 @@ def get_acvec(mol):
         return actin_vector
 
 def actin_polcorr(mol):
-    #print("Running actin_polcorr(mol) for {}".format(mol.name))
-    from chimera import Xform, angle, Vector, Point, cross
+    print("Running actin_polcorr(mol) for {}".format(mol.name))
+    from chimera import Xform
     if get_acvec(mol):
         av = get_acvec(mol)
-        y_axis = Vector(0,1,0)
-        delta = angle(av, y_axis)
-        rotax = cross(av, y_axis)
-        if abs(delta) > 0.0001:
+        if av.y < 0:
             mos = mol.openState
-            mos.globalXform(Xform.rotation(rotax,delta))
+            mos.globalXform(Xform.rotation(1,0,0,180))
 
 def orient_run(mol):
-    #print("Running orient_run(mol) for {}".format(mol.name))
+    print("Running orient_run(mol) for {}".format(mol.name))
     from chimera import numpyArrayFromAtoms, Xform, Point, cross, angle, Vector
     coords = numpyArrayFromAtoms(mol.atoms, xformed=True)
     from StructMeasure import bestLine
@@ -80,14 +117,13 @@ def orient_run(mol):
     v1 = Vector(*sv1)
     v2 = Vector(*sv2)
     openState.globalXform(Xform.translation(toOrigin))
-    print v1, v2
+
 
     ###ROTATION###
     
     # major axis onto Y
     y_axis = Vector(0.0, 1.0, 0.0)
     delta = angle(y_axis, v1)
-    print("Delta = {}".format(delta))
     if abs(delta) > 0.001 and abs(180.0 - delta) > 0.001:
             rotAxis = cross(y_axis, v1)
             rot = Xform.rotation(rotAxis, -delta)
@@ -106,7 +142,7 @@ def orient_run(mol):
             print('2nd-Axis onto X:'+"\n\n"+str(rotAxis))
 
 
-def run_om():
+def orient_mols():
     from chimera import openModels, Molecule
     mols = openModels.list(modelTypes=[Molecule])
     for mol in mols:
@@ -116,17 +152,5 @@ def run_om():
         actin_polcorr(mol)
         print ""
 
-
-def main():
-    for mol in selected_mols:
-        #orient_run(mol)
-        actin_polcorr(mol)
-
-from chimera import selection
-selected_mols = selection.currentMolecules()
-tmol = selected_mols[0]
-
-if __name__ == '__main__':
-    for mol in selected_mols:
-        orient_run(mol)
-        actin_polcorr(mol)
+orient_mols()
+    
