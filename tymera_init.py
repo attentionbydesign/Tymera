@@ -1,6 +1,6 @@
-def tymera_init():
+def initialize():
     import os, customaccelerators, sys
     tymera_path = os.path.dirname(__file__)
-    sys.path.append(tymera_path+'/*/')
+    #sys.path.append(tymera_path+'/*/')
 
 

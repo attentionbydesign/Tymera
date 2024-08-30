@@ -2,9 +2,19 @@
 
 import chimera, VolumePath
 from chimera import Point, Vector, Xform, numpyArrayFromAtoms, angle, cross
+import ScaleBar
 
 black = (0,0,0,1)
 axlen = 100
+
+#Scalebars can be used to indicate the length of an axis segment on display
+
+d = ScaleBar.scale_bar_dialog(create = 1) #create a scale_bar_dialog instance
+d.bar_color.showColor(black)
+d.label_color.showColor(black)
+d.show_scalebar.set(True) #set its show_scalebar attribute to True to display the scalebar 
+
+
 
 def create_axes():
     globaxs = VolumePath.Marker_Set('GlobalAxes')

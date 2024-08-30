@@ -19,7 +19,7 @@
 # by default; the IDLE is technically a separate layer on top of chimera
 # itself that lets you interact with chimera
 
- import ColorBySeq, os 
+import ColorBySeq, os 
 
 tymera_path = os.path.dirname(__file__)
 

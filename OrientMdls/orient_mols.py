@@ -116,17 +116,10 @@ def run_om():
         actin_polcorr(mol)
         print ""
 
-
-def main():
-    for mol in selected_mols:
-        #orient_run(mol)
-        actin_polcorr(mol)
-
-from chimera import selection
-selected_mols = selection.currentMolecules()
-tmol = selected_mols[0]
-
 if __name__ == '__main__':
+    from chimera import selection
+    selected_mols = selection.currentMolecules()
+    tmol = selected_mols[0]
     for mol in selected_mols:
         orient_run(mol)
         actin_polcorr(mol)

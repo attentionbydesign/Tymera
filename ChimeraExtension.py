@@ -17,7 +17,7 @@ class Tymera_EMO(chimera.extension.EMO):
     def icon(self):
         return None
     def activate(self):
-        self.module('tymera_init').tymera_init()
+        self.module('tymera_init').initialize()
         return None
 
 chimera.extension.manager.registerExtension(Tymera_EMO(__file__))
