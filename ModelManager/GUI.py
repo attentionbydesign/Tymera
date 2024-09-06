@@ -12,9 +12,14 @@ def openFileDialog():
                                     "*.*")))
 
     # Change label contents
-    print(filepath)
+    #print(filepath)
 
-    rc("open "+filepath)
+    #rc("open "+filepath)
+    return filepath
+
+if __name__ == '__main__':
+    openFileDialog()
+
                                                                                                     
 
 

@@ -15,40 +15,15 @@ def color_chain():
         if r != None:   #chain.residues will sometimes include a bunch of NoneType objects corresponding to atoms that are not part of residues, such as ligands or other non-protein structures; this statement avoids the error message that comes with trying to color an 'empty' residue object.
             r.ribbonColor = color  #the color attribute for residues is .ribbonColor, not .color (as you would for Molecule or Atom objects)
 
-def identify_seq(cobj,calcsim=False):
-    chain_key = {}
-    chain_key = r2d(tymera_path+'/ref/chain_key.txt')
-    seq1 = str(cobj)
-    match_rank = {}
-
-    for sname in chain_key:
-        seq2 = chain_key[sname]
-        if len(seq1) > len(seq2):
-            short_sequence = seq2
-            long_sequence = seq1
-        else:
-            short_sequence = seq1
-            long_sequence = seq2
-
-        ###FLANKING SEQUENCE BUFFER###
-        long_buff_length = int(float(len(short_sequence)) * 0.05) 
-        for count in range(long_buff_length):
-            long_sequence = 'X' + long_sequence + 'X'
-        ###------------------------###
-
-        aligned_seq1, aligned_seq2 = align_sequences(short_sequence, long_sequence)
-
-        similarity = calculate_similarity(aligned_seq1, aligned_seq2)
-
-        match_rank[similarity] = sname
-    max_similarity = max(match_rank)
-    best_match = match_rank[max_similarity]
-
-    #print best_match, max_similarity
-    if calcsim == True:
-        return max_similarity
-    else:
-        return best_match 
+def cled_out():
+    from chimera.coloreditor import Editor
+    import time
+    
+    cled = Editor()
+    time.sleep(1)
+    if cled.isVisible() == False:          
+        return cled.rgba
+        
 
 def color_by_seq():
     from chimera.colorTable import getColorByName
@@ -73,3 +48,6 @@ def color_by_seq():
                             res.ribbonColor = color
                 maxsim = identify_seq(cobj,True)
                 print cobj.chain,'\t',bestname,'\t',maxsim,'\t', color.name()
+
+##if __name__ == '__main__':
+##    color_by_seq()
