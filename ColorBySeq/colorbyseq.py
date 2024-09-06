@@ -1,19 +1,20 @@
 import os,chimera
 tymera_path = os.path.dirname(os.path.dirname(__file__))
-from tymera.commonfunctions import r2d
+from tymera.commonfunctions import r2d, current_selection
 from tymera.ColorBySeq.sequence_identifier import *
 
-def color_chain():
-    chain = chain_select() #get the chain object that you want to color
-    cid = chain.chainID #chain ID of that chain object
-    res = chain.residues #list of residue objects in the chain
-    
-    color = input("Enter color: ") #you can enter the color name since the MaterialColor objects have been assigned to them at the beginning
+def color_chain(color_str):
+    chain_objs = current_selection('Ch') #get the chain objects that you want to color
+    for chain in chain_objs:
+        cid = chain.chainID #chain ID of that chain object
+        res = chain.residues #list of residue objects in the chain
+        
+        color = chimera.colorTable.getColorByName(color_str)
 
-    #Color each residue (r) in the set of all residues in the chain (res)
-    for r in res:
-        if r != None:   #chain.residues will sometimes include a bunch of NoneType objects corresponding to atoms that are not part of residues, such as ligands or other non-protein structures; this statement avoids the error message that comes with trying to color an 'empty' residue object.
-            r.ribbonColor = color  #the color attribute for residues is .ribbonColor, not .color (as you would for Molecule or Atom objects)
+        #Color each residue (r) in the set of all residues in the chain (res)
+        for r in res:
+            if r != None:   #chain.residues will sometimes include a bunch of NoneType objects corresponding to atoms that are not part of residues, such as ligands or other non-protein structures; this statement avoids the error message that comes with trying to color an 'empty' residue object.
+                r.ribbonColor = color  #the color attribute for residues is .ribbonColor, not .color (as you would for Molecule or Atom objects)
 
 def cled_out():
     from chimera.coloreditor import Editor
