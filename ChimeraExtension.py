@@ -7,6 +7,8 @@ import chimera.extension
 # -----------------------------------------------------------------------------
 #
 class Tymera_EMO(chimera.extension.EMO):
+    #This syntax means that the Tymera_EMO class INHERITS the properties of the class <chimera.extension.EMO>.  Thus, you can easily define a class to register your custom plugin without needing to write much chimera-specific code.
+    #i.e., Tymera_EMO is a child class,while in parentheses is the parent class
 
     def name(self):
         return 'Tymera'
