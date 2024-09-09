@@ -66,6 +66,16 @@ def default_tbc():
         rc("volume #{} transparency 0.3 brightness 0.7".format(v.id))
 
 #---------------------------------------------------
+#Open selected molecule in default text editor
+def openMolText():
+    from tymera.ModelManager.openfilelocation import *
+    open_mdlfile()
+
+#Open the directory containing selected model in default file explorer
+def openMdlDir():
+    from tymera.ModelManager.openfilelocation import *
+    open_mdldir()
+
 #---------------------------------------------------
 #---------------------------------------------------
 
@@ -81,5 +91,8 @@ def register_accelerators():
   add_accelerator('sw', 'Toggle show only selected model / show all', shoToggl)
   add_accelerator('vx', 'Set voxelSize of all volumes based on box dimensions', vox_set)
   add_accelerator('vd', 'Custom volume display transparency and brightness', default_tbc)
+  add_accelerator('of', 'Open file location of selected model', openMolText)
+  add_accelerator('od', 'Open file location of selected model', openMdlDir)
+
 register_accelerators()
 
