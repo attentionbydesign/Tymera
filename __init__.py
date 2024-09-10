@@ -31,5 +31,6 @@ tymera_path = os.path.dirname(__file__)
 # the tymera. autofill menu will include tymera.tymera_path
 # which you can show using print(tymera.tymera_path)
 
+print("os.chdir(os.path.dirname(tymera.__file__))")
 
 
