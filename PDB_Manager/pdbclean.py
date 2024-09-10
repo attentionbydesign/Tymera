@@ -14,7 +14,7 @@ def remove_lines_with_pattern(file_path, pattern):
     with open(file_path, 'w') as file:
         file.writelines(filtered_lines)
 
-def init_cleancopy():
+def init_cleancopy(specpath=False):
     input_file_path = find_model_path(True)
     base, ext = os.path.splitext(input_file_path)
     output_file_path = "{}-CLEAN{}".format(base,ext)
@@ -47,7 +47,8 @@ def init_cleancopy():
 ##
 ##    print(f"Processed file saved as: {output_file_path}")
 
-def rm_badlines():
+def rm_badlines(specpath=False):
+
     cleancopy_path = init_cleancopy()
 
     filterout=[
