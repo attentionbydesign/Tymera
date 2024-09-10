@@ -28,7 +28,7 @@ def select_chains():
     #Get chain objects of unique pairs
     def get_chainz():
         chainz = []
-        for mol in cursel('Mo'):
+        for mol in current_selection('Mo'):
             for chain in mol.sequences():
                 molc = str(mol.id)+':'+chain.chainID
                 if molc in get_uniq_mcps():

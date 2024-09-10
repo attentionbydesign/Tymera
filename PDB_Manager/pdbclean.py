@@ -55,12 +55,17 @@ def rm_badlines():
         'SHEET',
         'ENDMDL',
         'MDL',
+        'MODEL',
+        'CONECT',
+        'REMARK',
+        'DBREF',
+        'SEQRES'
     ]
 
     for pattern in filterout:
         remove_lines_with_pattern(cleancopy_path, pattern)
 
-    open_file(cleancopy_path)
+    chimera.openModels.open(cleancopy_path)
 
 if __name__ == '__main__':
     rm_badlines()

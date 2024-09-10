@@ -57,21 +57,21 @@ def open_directory(directory_path):
     else:
         raise OSError('Unsupported operating system')
     
-def open_file(file_path):
+def open_textfile(file_path):
     # Normalize the path for the current OS
     abs_path = os.path.abspath(file_path)
     
     if platform.system() == 'Windows':
         # For Windows
-        os.startfile(abs_path)
+        subprocess.call(['notepad.exe', abs_path])
     elif platform.system() == 'Darwin':
         # For macOS
-        subprocess.call(['open', abs_path])
+        subprocess.call(['open', '-a', 'TextEdit', abs_path])
     elif platform.system() == 'Linux':
         # For Linux
         try:
             # Try common text editors in order
-            subprocess.call(['xdg-open', abs_path])
+            subprocess.call(['gedit', abs_path])
         except FileNotFoundError:
             raise OSError('No suitable file opener found for Linux')
     else:
@@ -84,7 +84,7 @@ def open_mdldir():
 
 def open_mdlfile():
     mfile_path = find_model_path(True)
-    open_file(mfile_path)
+    open_textfile(mfile_path)
 
 if __name__ == '__main__':
     open_mdldir()
