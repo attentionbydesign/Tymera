@@ -32,5 +32,6 @@ tymera_path = os.path.dirname(__file__)
 # which you can show using print(tymera.tymera_path)
 
 print("os.chdir(os.path.dirname(tymera.__file__))")
-
+from tymera.commonfunctions import cwd2tymera
+cwd2tymera()
 

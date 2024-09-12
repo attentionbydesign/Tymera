@@ -15,6 +15,9 @@ def active_select():
     from tymera.ModelManager.active_state import activate_selected
     activate_selected()
 
+def select_wholemol():
+    from tymera.ModelManager.active_state import select_restofmol
+    select_restofmol()
 #---------------------------------------------------
 
 def shoToggl():
@@ -82,6 +85,29 @@ def fitmap_selected():
     fitseld()
     
 #---------------------------------------------------
+def toggle_lineup():
+    pass
+#---------------------------------------------------
+def flipsm_x():
+    from tymera.OrientMdls import *
+    flip_sel('x')
+
+def flipsm_y():
+    from tymera.OrientMdls import *
+    flip_sel('y')
+
+def flipsm_z():
+    from tymera.OrientMdls import *
+    flip_sel('z')
+
+#---------------------------------------------------
+
+
+
+
+#---------------------------------------------------
+#---------------------------------------------------
+#---------------------------------------------------
 
 def register_accelerators():
 
@@ -98,6 +124,10 @@ def register_accelerators():
   add_accelerator('of', 'Open file location of selected model', openMolText)
   add_accelerator('od', 'Open file location of selected model', openMdlDir)
   add_accelerator('fm', 'Apply fitmap on two selected models; (Mol -> Vol) or (Vol -> Vol)', fitmap_selected)
-
+  add_accelerator('wm', 'Expand current selection to whole molecules', select_wholemol)
+  add_accelerator('lu', 'Toggle line-up view', toggle_lineup)
+  add_accelerator('fx', 'Flip selected model across x-axis', flipsm_x)
+  add_accelerator('fy', 'Flip selected model across x-axis', flipsm_y)
+  add_accelerator('fz', 'Flip selected model across x-axis', flipsm_z)
 register_accelerators()
 

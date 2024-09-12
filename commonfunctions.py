@@ -83,3 +83,8 @@ def current_selection(level='Gr',verbose=False,menu=False):
             print("Returned list of {} in current selection:\n".format(method[len(pattern):len(method)-2]))
             
         return csel
+
+def cwd2tymera():
+    #Set the current working directory of IDLE to tymera/ parent directory
+    import os,tymera
+    os.chdir(os.path.dirname(tymera.__file__))

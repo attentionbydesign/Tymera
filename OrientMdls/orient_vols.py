@@ -3,6 +3,7 @@ import numpy as np
 from VolumeViewer import volume
 
 #####_DEFINE FUNCTIONS_#####----------------
+
 #rotation matrix
 def get_rmx(vol,invert=False):
     from chimera import Xform
@@ -52,26 +53,9 @@ def run_ov():
         vos.globalXform(rmxi)
         vos.globalXform(tmxi)
 
-        
-    ##    print('')
-    ##    print(vol.name_with_id())
-    ##    for a in range(0,3):
-    ##        crd = {0:'x',1:'y',2:'z'}
-    ##        av = vol.axis_vector(a)
-    ##        x,y,z = av
-    ##        xr = round(x,2)
-    ##        yr = round(y,2)
-    ##        zr = round(z,2)
-    ##        avr = (xr,yr,zr)
-    ##        print('{}-axis: {}'.format(crd[a],avr))
-
         vos.globalXform(Xform.rotation(Vector(1,0,0),90))
 
-    ##    vol.transparency_factor=0.3
-    ##    vol.surface_brightness_factor=0.7
-    ##    vol.rendering_options.voxel_limit=256
-    ##    
-    ##    vol.show()
+
     
     
 
