@@ -77,6 +77,10 @@ def openMdlDir():
     open_mdldir()
 
 #---------------------------------------------------
+def fitmap_selected():
+    from tymera.OrientMdls.fit_selected import *
+    fitseld()
+    
 #---------------------------------------------------
 
 def register_accelerators():
@@ -93,6 +97,7 @@ def register_accelerators():
   add_accelerator('vd', 'Custom volume display transparency and brightness', default_tbc)
   add_accelerator('of', 'Open file location of selected model', openMolText)
   add_accelerator('od', 'Open file location of selected model', openMdlDir)
+  add_accelerator('fm', 'Apply fitmap on two selected models; (Mol -> Vol) or (Vol -> Vol)', fitmap_selected)
 
 register_accelerators()
 
