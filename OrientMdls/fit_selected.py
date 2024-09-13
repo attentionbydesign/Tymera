@@ -21,21 +21,35 @@ def getobj(sel,ctype):
 def fitmap(tofit,fitinto):
     rc("fitmap #{} #{}".format(tofit.id,fitinto.id))
 
+def get_mdlNo(sel,mid):
+    for m in sel:
+        if m.id == mid:
+            return m
+
 def fitseld():
     cursel = current_selection()
     nmol = typecount(cursel,'mol')
     nvol = typecount(cursel,'vol')
-    if len(cursel) == nmol + nvol == 2:
+
+    #Fitting mol --> vol
+    if len(cursel) / 2 == nmol == nvol == 1:
         tofit = getobj(cursel,'mol')
         fitinto = getobj(cursel,'vol')
         print("Fitting {} into {}...".format(tofit,fitinto))
         fitmap(tofit,fitinto)
+
+    #Fitting vol --> vol
     elif len(cursel) == nvol == 2:
         for v in cursel:
             print v.id, v.name
-        tofit = input("Shift this volume (id): ")
-        fitinto = input("Fit into this volume (id): ")
-        print("Fitting {} into {}...".format(tofit,fitinto))
+
+        tofitID = input("Shift this volume (id): ")
+        tofit = get_mdlNo(cursel, tofitID)
+
+        fitintoID = input("Fit into this volume (id): ")
+        fitinto = get_mdlNo(cursel, fitintoID)
+
+        print("Fitting {} into {}...".format(tofit.name,fitinto.name))
         fitmap(tofit,fitinto) 
     else:
         print("Please select exactly one Volume and one Molecule, or exactly two Volumes.")
