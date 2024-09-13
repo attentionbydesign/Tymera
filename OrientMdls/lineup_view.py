@@ -78,9 +78,17 @@ def get_aveXZ(sel):
 def lineup_models():
     cursel = current_selection()
     n = len(cursel)
+    ave_y = get_aveY(cursel)
+    ave_xz = get_aveXZ(cursel)
+
     if n < 7:
        #Single row
-       pass
+       j = -1
+       for m in cursel:
+           j += 1
+           side_step = ave_xz * j
+           mos = m.openState
+           mos.globalXform(Xform.translation(side_step,0,0))
     elif is_square(n):
        import math
        sidelen = int(math.sqrt(n))
@@ -93,8 +101,8 @@ def lineup_models():
                "{} x {}".format(s2,s1)
            )
 
-    ave_y = get_aveY(cursel)
-    ave_xz = get_aveXZ(cursel)
+
+
 
     wi_h = ave_y * nrows
     wi_w = ave_xz * ncols
