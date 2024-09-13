@@ -13,7 +13,6 @@ time, thereby allowing an easier option to undo movement
 """
 import chimera
 from tymera.commonfunctions import current_selection
-from tymera.OrientMdls import orient_
 
 def save_current_positions():
     pass
@@ -76,6 +75,9 @@ def get_aveXZ(sel):
     return aveXZ
 
 def lineup_models():
+    import chimera
+    from chimera import Xform
+    
     cursel = current_selection()
     n = len(cursel)
     ave_y = get_aveY(cursel)
@@ -101,16 +103,7 @@ def lineup_models():
                "{} x {}".format(s2,s1)
            )
 
-
-
-
-    wi_h = ave_y * nrows
-    wi_w = ave_xz * ncols
-    chimera.viewer.windowSize = (wi_w, wi_h)
-
-    j=0
-    for m in cursel:
-        bs = 
-        j+=1
-
+    # wi_h = ave_y * nrows
+    # wi_w = ave_xz * ncols
+    # chimera.viewer.windowSize = (wi_w, wi_h)
     
