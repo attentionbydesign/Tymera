@@ -31,3 +31,8 @@ tymera, since the colorbyseq.py module got imported.
 
 import tymera
 os.chdir(os.path.dirname(tymera.__file__))
+
+**Demo Session**
+
+`cd <tymera>`
+`chimera --script demo_8DD0.py`
