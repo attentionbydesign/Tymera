@@ -54,5 +54,15 @@ def fitseld():
     else:
         print("Please select exactly one Volume and one Molecule, or exactly two Volumes.")
 
+
+def loopfit(sel):
+    from chimera import runCommand as rc
+    refmdl = sel[0]
+    for m in sel[1:len(sel)]:
+        rc("fitmap #{} #{}".format(m.id, refmdl.id))
+
+
+
+
 if __name__ == '__main__':
     fitseld()

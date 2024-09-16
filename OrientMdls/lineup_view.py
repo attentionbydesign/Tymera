@@ -30,9 +30,9 @@ def is_square(apositiveint):
 
 def factor_pairs(apositiveint):
     factors = []
-    for i in range(1, int(value**0.5)+1):
-        if value % i == 0:
-            factors.append((i, value / i))
+    for i in range(1, int(apositiveint**0.5)+1):
+        if apositiveint % i == 0:
+            factors.append((i, apositiveint / i))
     return factors
 
 
@@ -58,26 +58,31 @@ def is_prime(n):
 def get_aveY(sel):
     yvals = []
     for v in sel:
+        vox_size = v.data.step[1]  #assuming bbox is a cube
         bbdim = v.subregion()[1]
         x,z,y = bbdim
-        yvals.append(y)
+        ya = y * vox_size
+        yvals.append(ya)
     aveY = sum(yvals) / len(yvals)
     return aveY
 
 def get_aveXZ(sel):
     xzvals = []
     for v in sel:
+        vox_size = v.data.step[1]  #assuming bbox is a cube
         bbdim = v.subregion()[1]
         x,z,y = bbdim
-        xzvals.append(x)
-        xzvals.append(z)
+        xa = x * vox_size
+        za = z * vox_size
+        xzvals.append(xa)
+        xzvals.append(za)
     aveXZ = sum(xzvals) / len(xzvals)
     return aveXZ
 
 def lineup_models():
     import chimera
-    from chimera import Xform
-    
+    from chimera import Xform, runCommand as rc
+
     cursel = current_selection()
     n = len(cursel)
     ave_y = get_aveY(cursel)
@@ -95,13 +100,31 @@ def lineup_models():
        import math
        sidelen = int(math.sqrt(n))
     elif is_prime(n) == False:
+       from chimera import Vector,Xform
        dim_pairs = factor_pairs(n)
-       for pair in dim_pairs:
-           s1,s2=pair
-           print(
-               "{} x {}".format(s1,s2),
-               "{} x {}".format(s2,s1)
-           )
+       sqrapprox = dim_pairs[len(dim_pairs)-1]
+       xl,yl = sqrapprox
+       target_coords = []
+       for y in range(yl):
+           for x in range(xl):
+               target_coords.append((x,y))
+       for m in cursel:
+           idx = cursel.index(m)
+           tc = target_coords[idx]
+           nx,ny = tc
+
+           spacer = 1.25    #adjust as needed
+
+           tx = -spacer * nx * ave_xz
+           ty = -spacer * ny * ave_y
+           tlv = Vector(tx,ty,0)
+           mos = m.openState
+           mos.globalXform(Xform.translation(tlv))
+
+    rc("cofr independent")
+
+           
+           
 
     # wi_h = ave_y * nrows
     # wi_w = ave_xz * ncols

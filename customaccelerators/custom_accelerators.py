@@ -102,8 +102,11 @@ def flipsm_z():
 
 #---------------------------------------------------
 
-
-
+def loopfitmap():
+    from tymera.OrientMdls.fit_selected import loopfit
+    from tymera.commonfunctions import current_selection
+    cursel = current_selection()
+    loopfit(cursel)
 
 #---------------------------------------------------
 #---------------------------------------------------
@@ -129,5 +132,6 @@ def register_accelerators():
   add_accelerator('fx', 'Flip selected model across x-axis', flipsm_x)
   add_accelerator('fy', 'Flip selected model across x-axis', flipsm_y)
   add_accelerator('fz', 'Flip selected model across x-axis', flipsm_z)
+  add_accelerator('lf', 'Fit all selected models to the first one in the selection', loopfitmap)
 register_accelerators()
 
