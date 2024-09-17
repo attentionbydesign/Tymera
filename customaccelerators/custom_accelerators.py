@@ -133,5 +133,6 @@ def register_accelerators():
   add_accelerator('fy', 'Flip selected model across x-axis', flipsm_y)
   add_accelerator('fz', 'Flip selected model across x-axis', flipsm_z)
   add_accelerator('lf', 'Fit all selected models to the first one in the selection', loopfitmap)
+  add_accelerator('tl', 'Toggle between lineup view and original view', toggle_lineup)
 register_accelerators()
 

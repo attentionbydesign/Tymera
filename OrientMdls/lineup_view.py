@@ -13,9 +13,83 @@ time, thereby allowing an easier option to undo movement
 """
 import chimera
 from tymera.commonfunctions import current_selection
+from chimera import openModels as om, numpyArrayFromAtoms
+from StructMeasure import bestLine
 
-def save_current_positions():
-    pass
+def nparr(mol):
+    from chimera import numpyArrayFromAtoms
+    coords = numpyArrayFromAtoms(mol.atoms, xformed=True)
+    return coords
+
+def compute_transformation_matrix(A, B):
+    # Ensure A and B are numpy arrays
+    A = np.asarray(A)
+    B = np.asarray(B)
+    
+    # Compute centroids
+    centroid_A = np.mean(A, axis=0)
+    centroid_B = np.mean(B, axis=0)
+    
+    # Center the coordinates
+    A_centered = A - centroid_A
+    B_centered = B - centroid_B
+    
+    # Compute the covariance matrix
+    H = np.dot(B_centered.T, A_centered)
+    
+    # Perform SVD
+    U, _, Vt = np.linalg.svd(H)
+    
+    # Compute rotation matrix
+    R = np.dot(Vt.T, U.T)
+    
+    # Ensure R is a proper rotation matrix by checking the determinant
+    if np.linalg.det(R) < 0:
+        Vt[2, :] *= -1
+        R = np.dot(Vt.T, U.T)
+    
+    # Compute translation vector
+    t = centroid_B - np.dot(R, centroid_A)
+    
+    # Construct the transformation matrix
+    transformation_matrix = np.eye(4)
+    transformation_matrix[:3, :3] = R
+    transformation_matrix[:3, 3] = t
+    
+    return transformation_matrix
+
+def np_to_Xform(npxf):
+    from chimera import Vector, Point, Xform
+    cv1 = Vector(npxf[0][0],npxf[1][0],npxf[2][0])
+    cv2 = Vector(npxf[0][1],npxf[1][1],npxf[2][1])
+    cv3 = Vector(npxf[0][2],npxf[1][2],npxf[2][2])
+    tlp = Point(npxf[0][3],npxf[1][3],npxf[2][3])
+    xf = Xform.coordFrame(cv1,cv2,cv3,tlp)
+    return xf
+
+def save_current_position(m):
+    if type(m) == VolumeViewer.volume.Volume:
+        vxf = m.model_transform()
+        return vxf
+    if type(m) == chimera.Molecule:
+        coords = nparr(m)
+        return coords
+        
+def revert_to_saved_position(m,saved_position):
+    if type(m) == VolumeViewer.volume.Volume:
+        vxf = m.model_transform()
+        return vxf
+    if type(m) == chimera.Molecule:
+        current_position = nparr(m)
+        npxf = compute_transformation_matrix(saved_position,current_position)
+        mxf = np_to_Xform(npxf)
+        mos = m.openState
+        mos.globalXform(mxf.inverse())
+
+
+
+            
+
 #placeholder for now - will edit later, so you can revert back to original view
 
 def is_square(apositiveint):
