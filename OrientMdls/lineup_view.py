@@ -21,6 +21,51 @@ def nparr(mol):
     coords = numpyArrayFromAtoms(mol.atoms, xformed=True)
     return coords
 
+def get_centroid(mol):
+    coords = nparr(mol)
+    centroid = np.mean(coords, axis=0)
+    return centroid
+
+def BLquery(mol,optstr=None):
+    from StructMeasure import bestLine
+
+    coords = nparr(mol)
+    centroidPt, majorVec, centroidArray, majorArray, centered, vals, vecs = \
+                    bestLine(coords)
+    
+    options = {
+        "centroidPt": centroidPt,
+        "majorVec": majorVec,
+        "centroidArray": centroidArray,
+        "majorArray": majorArray,
+        "centered": centered,
+        "vals": vals,
+        "vecs": vecs
+    }
+    
+    if optstr in options:
+         return options[optstr]
+    else:
+        print("Enter any of the following options for 'opt=' argument:\n")
+        for o in options:
+            print o
+
+def bestAxes(mol):
+    vals = BLquery(mol,'vals')
+    vecs = BLquery(mol,'vecs')
+    sv = zip(vals,vecs)
+    sv.sort()
+    sv.reverse()
+    for i in range(len(sv)):
+        print("Vector #{}".format(i))
+        mag = sv[i][0]
+        uv = sv[i][1]
+        uv_rt = tuple(round(n,4) for n in uv)
+        print("Magnitude: {}\nUnit Vector: {}".format(mag,uv_rt))
+        axd = {0:'x',1:'y',2:'z'}
+        axis = axd[np.argmax(abs(sv[i][1]))]
+        print("This is most aligned with the global {}-axis.\n".format(axis.upper()))
+
 def compute_transformation_matrix(A, B):
     # Ensure A and B are numpy arrays
     A = np.asarray(A)
@@ -58,6 +103,31 @@ def compute_transformation_matrix(A, B):
     
     return transformation_matrix
 
+def reorient(mol,old_mv):
+    from chimera import angle, cross, Xform
+    #assign old_mv to BLquery(mol,'majorVec') prior to any transformations
+    new_mv = BLquery(mol,'majorVec')
+
+    delta = angle(new_mv,old_mv)
+    rotax = cross(new_mv,old_mv)
+
+    mos = mol.openState
+    mos.globalXform(Xform.rotation(rotax, delta))
+
+
+
+
+
+def get_tlv(A,B):
+
+    # Ensure A and B are numpy arrays
+    A = np.asarray(A)
+    B = np.asarray(B)
+
+    # Compute centroids
+    centroid_A = np.mean(A, axis=0)
+    centroid_B = np.mean(B, axis=0)
+
 def np_to_Xform(npxf):
     from chimera import Vector, Point, Xform
     cv1 = Vector(npxf[0][0],npxf[1][0],npxf[2][0])
@@ -85,6 +155,11 @@ def revert_to_saved_position(m,saved_position):
         mxf = np_to_Xform(npxf)
         mos = m.openState
         mos.globalXform(mxf.inverse())
+
+def reset_position(m)
+    if type(m) == chimera.Molecule:
+        current_coords = nparr(m)
+
 
 
 
