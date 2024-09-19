@@ -50,21 +50,28 @@ def BLquery(mol,optstr=None):
         for o in options:
             print o
 
-def bestAxes(mol):
+def bestAxes(mol,listvecs=False):
+    from chimera import Vector
     vals = BLquery(mol,'vals')
     vecs = BLquery(mol,'vecs')
     sv = zip(vals,vecs)
     sv.sort()
     sv.reverse()
-    for i in range(len(sv)):
-        print("Vector #{}".format(i))
-        mag = sv[i][0]
-        uv = sv[i][1]
-        uv_rt = tuple(round(n,4) for n in uv)
-        print("Magnitude: {}\nUnit Vector: {}".format(mag,uv_rt))
-        axd = {0:'x',1:'y',2:'z'}
-        axis = axd[np.argmax(abs(sv[i][1]))]
-        print("This is most aligned with the global {}-axis.\n".format(axis.upper()))
+
+    if listvecs == True:
+        for i in range(len(sv)):
+            print("Vector #{}".format(i))
+            mag = sv[i][0]
+            uv = sv[i][1]
+            uv_rt = tuple(round(n,4) for n in uv)
+            print("Magnitude: {}\nUnit Vector: {}".format(mag,uv_rt))
+            axd = {0:'x',1:'y',2:'z'}
+            axis = axd[np.argmax(abs(sv[i][1]))]
+            print("This is most aligned with the global {}-axis.\n".format(axis.upper()))
+    else:
+        axl = sv[0][1]
+        axv = Vector(axl[0],axl[1],axl[2])
+        return axv
 
 def compute_transformation_matrix(A, B):
     # Ensure A and B are numpy arrays
@@ -103,20 +110,24 @@ def compute_transformation_matrix(A, B):
     
     return transformation_matrix
 
-def reorient(mol,old_mv):
+def reorient(mol, saved_coords):
     from chimera import angle, cross, Xform
     #assign old_mv to BLquery(mol,'majorVec') prior to any transformations
-    new_mv = BLquery(mol,'majorVec')
-
-    delta = angle(new_mv,old_mv)
-    rotax = cross(new_mv,old_mv)
-
+    new_coords = nparr(mol)
+    xf = getXF(mol, saved_coords)
+    uv,ang = xf.getRotation()
     mos = mol.openState
-    mos.globalXform(Xform.rotation(rotax, delta))
+    mos.globalXform(Xform.rotation(uv,ang))
+    
+def rotate(mol, axis, angle):
+    from chimera import Xform
+    mos = mol.openState
+    mos.globalXform(Xform.rotation(axis, angle))
 
-
-
-
+def translate(mol, vector):
+    from chimera import Xform
+    mos = mol.openState
+    mos.globalXform(Xform.translation(vector))
 
 def get_tlv(A,B):
 
@@ -144,7 +155,12 @@ def save_current_position(m):
     if type(m) == chimera.Molecule:
         coords = nparr(m)
         return coords
-        
+
+def getXF(mol, saved_coords):
+    new_coords = nparr(mol)
+    npxf = compute_transformation_matrix(saved_coords,new_coords)
+    return np_to_Xform(npxf)
+    
 def revert_to_saved_position(m,saved_position):
     if type(m) == VolumeViewer.volume.Volume:
         vxf = m.model_transform()
@@ -156,14 +172,19 @@ def revert_to_saved_position(m,saved_position):
         mos = m.openState
         mos.globalXform(mxf.inverse())
 
-def reset_position(m)
-    if type(m) == chimera.Molecule:
-        current_coords = nparr(m)
+def reposition(mol, saved_coords):
+    from chimera import angle, cross, Xform
+    new_coords = nparr(mol)
+    xf = getXF(mol, saved_coords)
+    tlv = xf.getTranslation()
+    mos = mol.openState
+    mos.globalXform(Xform.translation(-tlv))
 
+def revertSpatialConfig(mol, saved_coords):
+    reorient(mol, saved_coords)
+    reposition(mol, saved_coords)
 
-
-
-            
+           
 
 #placeholder for now - will edit later, so you can revert back to original view
 
