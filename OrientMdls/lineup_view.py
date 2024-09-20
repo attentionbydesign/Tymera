@@ -15,65 +15,17 @@ import chimera
 from tymera.commonfunctions import current_selection
 from chimera import openModels as om, numpyArrayFromAtoms
 from StructMeasure import bestLine
+from tymera.tymath import *
+import VolumeViewer
 
+# MOL-SPECIFIC -------------------------
 def nparr(mol):
     from chimera import numpyArrayFromAtoms
     coords = numpyArrayFromAtoms(mol.atoms, xformed=True)
     return coords
 
-def get_centroid(mol):
-    coords = nparr(mol)
-    centroid = np.mean(coords, axis=0)
-    return centroid
-
-def BLquery(mol,optstr=None):
-    from StructMeasure import bestLine
-
-    coords = nparr(mol)
-    centroidPt, majorVec, centroidArray, majorArray, centered, vals, vecs = \
-                    bestLine(coords)
-    
-    options = {
-        "centroidPt": centroidPt,
-        "majorVec": majorVec,
-        "centroidArray": centroidArray,
-        "majorArray": majorArray,
-        "centered": centered,
-        "vals": vals,
-        "vecs": vecs
-    }
-    
-    if optstr in options:
-         return options[optstr]
-    else:
-        print("Enter any of the following options for 'opt=' argument:\n")
-        for o in options:
-            print o
-
-def bestAxes(mol,listvecs=False):
-    from chimera import Vector
-    vals = BLquery(mol,'vals')
-    vecs = BLquery(mol,'vecs')
-    sv = zip(vals,vecs)
-    sv.sort()
-    sv.reverse()
-
-    if listvecs == True:
-        for i in range(len(sv)):
-            print("Vector #{}".format(i))
-            mag = sv[i][0]
-            uv = sv[i][1]
-            uv_rt = tuple(round(n,4) for n in uv)
-            print("Magnitude: {}\nUnit Vector: {}".format(mag,uv_rt))
-            axd = {0:'x',1:'y',2:'z'}
-            axis = axd[np.argmax(abs(sv[i][1]))]
-            print("This is most aligned with the global {}-axis.\n".format(axis.upper()))
-    else:
-        axl = sv[0][1]
-        axv = Vector(axl[0],axl[1],axl[2])
-        return axv
-
-def compute_transformation_matrix(A, B):
+#get_npXF returns the transformation matrix that would move A into B, where A and B are equally sized arrays depicting coordinates of multiple points within a rigid body (e.g., the atomic coordinates of a molecule in 3D space) 
+def get_npXF(A, B):
     # Ensure A and B are numpy arrays
     A = np.asarray(A)
     B = np.asarray(B)
@@ -109,36 +61,7 @@ def compute_transformation_matrix(A, B):
     transformation_matrix[:3, 3] = t
     
     return transformation_matrix
-
-def reorient(mol, saved_coords):
-    from chimera import angle, cross, Xform
-    #assign old_mv to BLquery(mol,'majorVec') prior to any transformations
-    new_coords = nparr(mol)
-    xf = getXF(mol, saved_coords)
-    uv,ang = xf.getRotation()
-    mos = mol.openState
-    mos.globalXform(Xform.rotation(uv,ang))
     
-def rotate(mol, axis, angle):
-    from chimera import Xform
-    mos = mol.openState
-    mos.globalXform(Xform.rotation(axis, angle))
-
-def translate(mol, vector):
-    from chimera import Xform
-    mos = mol.openState
-    mos.globalXform(Xform.translation(vector))
-
-def get_tlv(A,B):
-
-    # Ensure A and B are numpy arrays
-    A = np.asarray(A)
-    B = np.asarray(B)
-
-    # Compute centroids
-    centroid_A = np.mean(A, axis=0)
-    centroid_B = np.mean(B, axis=0)
-
 def np_to_Xform(npxf):
     from chimera import Vector, Point, Xform
     cv1 = Vector(npxf[0][0],npxf[1][0],npxf[2][0])
@@ -148,17 +71,9 @@ def np_to_Xform(npxf):
     xf = Xform.coordFrame(cv1,cv2,cv3,tlp)
     return xf
 
-def save_current_position(m):
-    if type(m) == VolumeViewer.volume.Volume:
-        vxf = m.model_transform()
-        return vxf
-    if type(m) == chimera.Molecule:
-        coords = nparr(m)
-        return coords
-
 def getXF(mol, saved_coords):
     new_coords = nparr(mol)
-    npxf = compute_transformation_matrix(saved_coords,new_coords)
+    npxf = get_npXF(saved_coords,new_coords)
     return np_to_Xform(npxf)
     
 def revert_to_saved_position(m,saved_position):
@@ -167,10 +82,19 @@ def revert_to_saved_position(m,saved_position):
         return vxf
     if type(m) == chimera.Molecule:
         current_position = nparr(m)
-        npxf = compute_transformation_matrix(saved_position,current_position)
+        npxf = get_npXF(saved_position,current_position)
         mxf = np_to_Xform(npxf)
         mos = m.openState
         mos.globalXform(mxf.inverse())
+
+def reorient(mol, saved_coords):
+    from chimera import angle, cross, Xform
+    #assign old_mv to BLquery(mol,'majorVec') prior to any transformations
+    new_coords = nparr(mol)
+    xf = getXF(mol, saved_coords)
+    uv,ang = xf.getRotation()
+    mos = mol.openState
+    mos.globalXform(Xform.rotation(uv,ang))
 
 def reposition(mol, saved_coords):
     from chimera import angle, cross, Xform
@@ -180,51 +104,31 @@ def reposition(mol, saved_coords):
     mos = mol.openState
     mos.globalXform(Xform.translation(-tlv))
 
-def revertSpatialConfig(mol, saved_coords):
-    reorient(mol, saved_coords)
-    reposition(mol, saved_coords)
+### REVERT MOLS or VOLS --------------------------------
+def get_position(m):
+    if type(m) == VolumeViewer.volume.Volume:
+        vxf = m.model_transform()
+        return vxf
+    if type(m) == chimera.Molecule:
+        coords = nparr(m)
+        return coords
 
-           
-
-#placeholder for now - will edit later, so you can revert back to original view
-
-def is_square(apositiveint):
-  x = apositiveint // 2
-  seen = set([x])
-  while x * x != apositiveint:
-    x = (x + (apositiveint // x)) // 2
-    if x in seen: return False
-    seen.add(x)
-  return True
-
-
-def factor_pairs(apositiveint):
-    factors = []
-    for i in range(1, int(apositiveint**0.5)+1):
-        if apositiveint % i == 0:
-            factors.append((i, apositiveint / i))
-    return factors
+def revertSpatialConfig(m, saved_position):
+    if type(m) == VolumeViewer.volume.Volume:
+        vxf1 = saved_position
+        vxf2 = m.model_transform()
+        vos = m.openState
+        vos.globalXform(vxf2.inverse())
+        vos.globalXform(vxf1)
+    if type(m) == chimera.Molecule:
+        reorient(mol, saved_position)
+        reposition(mol, saved_position)
 
 
-def is_prime(n):
-    """
-    Check if a number is prime.
-    """
-    if n <= 1:
-        return False
-    if n <= 3:
-        return True
-    if n % 2 == 0 or n % 3 == 0:
-        return False
-
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
-            return False
-        i += 6
-
-    return True
-
+        
+###----------------------------------------------------------
+### LINEUP VIEW ---------------------------------------------
+###----------------------------------------------------------
 def get_aveY(sel):
     yvals = []
     for v in sel:
@@ -249,6 +153,28 @@ def get_aveXZ(sel):
     aveXZ = sum(xzvals) / len(xzvals)
     return aveXZ
 
+def save_positions(selected=False):
+    model_positions = {}
+
+    if selected == True:
+        from tymera.commonfunctions import current_selection
+        mdls = current_selection()
+    else:
+        from chimera import openModels as om
+        mdls = om.list()
+
+    for m in mdls:
+        model_positions[m] = get_position(m)
+
+    return model_positions
+
+def revert_positions(mdls,saved_positions):
+    for m in mdls:
+        if m in saved_positions:
+            revertSpatialConfig(m,saved_positions[m])
+    from chimera import runCommand as rc
+    rc('cofr models')
+
 def lineup_models():
     import chimera
     from chimera import Xform, runCommand as rc
@@ -257,6 +183,8 @@ def lineup_models():
     n = len(cursel)
     ave_y = get_aveY(cursel)
     ave_xz = get_aveXZ(cursel)
+
+
 
     if n < 7:
        #Single row

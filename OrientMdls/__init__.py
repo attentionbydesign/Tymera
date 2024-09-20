@@ -68,4 +68,6 @@ def flip_sel(ax_str):
     cursel = current_selection()
     for m in cursel:
         flip_mdl(m, ax_str)
+
+
     
