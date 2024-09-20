@@ -173,6 +173,7 @@ def revert_positions(mdls,saved_positions):
         if m in saved_positions:
             revertSpatialConfig(m,saved_positions[m])
     from chimera import runCommand as rc
+    chimera.viewer.viewAll()
     rc('cofr models')
 
 def lineup_models():
@@ -218,8 +219,9 @@ def lineup_models():
            tlv = Vector(tx,ty,0)
            mos = m.openState
            mos.globalXform(Xform.translation(tlv))
-
+    chimera.viewer.viewAll()
     rc("cofr independent")
+
 
            
            
