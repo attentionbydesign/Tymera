@@ -60,7 +60,7 @@ def loopfit(sel):
     refmdl = sel[0]
     for m in sel[1:len(sel)]:
         rc("fitmap #{} #{}".format(m.id, refmdl.id))
-
+    chimera.openModels.cofrMethod = 1 #Center of Models; can run openModels.<cofrMethod name> to get the number of other methods
 
 
 

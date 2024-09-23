@@ -4,7 +4,7 @@ def orient_all():
     orient_mols.run_om()
     orient_vols.run_ov()
     chimera.viewer.viewAll(resetCofrMethod=False) #equivalent to standard accelerator 'va'
-
+    chimera.openModels.cofrMethod = 1
 # NOTE: 'viewer' is not a module of chimera, it is actually
 # an variable name for which a C++ chimera environment class
 # (LensViewer or NoGuiViewer) is instantiated in the __init__.py 

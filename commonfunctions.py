@@ -10,6 +10,12 @@ def r2d(filename):
     return result_dict
     file.close()
 
+def wfd(dictobj,dictname):
+    outputdir = 'tymera/ref/'
+    with open(outputdir + '{}.txt'.format(dictname), 'w') as f:
+    for key, value in dictobj.items():
+        f.write(f"{key}\t{value}\n")
+
 
 #-----------------------------------------------------------------
 

@@ -153,14 +153,15 @@ def get_aveXZ(sel):
     aveXZ = sum(xzvals) / len(xzvals)
     return aveXZ
 
-def save_positions(selected=False):
+def save_positions():
+    from chimera import openModels as om
+    from tymera.commonfunctions import current_selection
+
     model_positions = {}
 
-    if selected == True:
-        from tymera.commonfunctions import current_selection
+    if current_selection():
         mdls = current_selection()
     else:
-        from chimera import openModels as om
         mdls = om.list()
 
     for m in mdls:
@@ -168,7 +169,17 @@ def save_positions(selected=False):
 
     return model_positions
 
-def revert_positions(mdls,saved_positions):
+def revert_positions(saved_config=None):
+    if current_selection():
+        mdls = current_selection()
+    else:
+        mdls = chimera.openModels.list()
+
+    if saved_config:
+        saved_positions = saved_config #if you pass a dictionary of model:position pairs as an argument
+    elif inital_config:
+        saved_positions = initial_config #i.e., if a globally saved dictionary of positions exists by this name
+    
     for m in mdls:
         if m in saved_positions:
             revertSpatialConfig(m,saved_positions[m])
@@ -180,17 +191,22 @@ def lineup_models():
     import chimera
     from chimera import Xform, runCommand as rc
 
-    cursel = current_selection()
-    n = len(cursel)
-    ave_y = get_aveY(cursel)
-    ave_xz = get_aveXZ(cursel)
+    global initial_config
+    initial_config = save_positions()
 
+    if current_selection():
+        mdls = current_selection()
+    else:
+        mdls = chimera.openModels.list()
 
+    n = len(mdls)
+    ave_y = get_aveY(mdls)
+    ave_xz = get_aveXZ(mdls)
 
     if n < 7:
        #Single row
        j = -1
-       for m in cursel:
+       for m in mdls:
            j += 1
            side_step = ave_xz * j
            mos = m.openState
@@ -207,8 +223,8 @@ def lineup_models():
        for y in range(yl):
            for x in range(xl):
                target_coords.append((x,y))
-       for m in cursel:
-           idx = cursel.index(m)
+       for m in mdls:
+           idx = mdls.index(m)
            tc = target_coords[idx]
            nx,ny = tc
 

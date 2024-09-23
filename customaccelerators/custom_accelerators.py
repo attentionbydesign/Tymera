@@ -109,6 +109,14 @@ def loopfitmap():
     loopfit(cursel)
 
 #---------------------------------------------------
+
+def lineup_mdls():
+    from tymera.OrientMdls.lineup_view import lineup_models
+    lineup_models()
+
+def revert_pos():
+    from tymera.OrientMdls.lineup_view import revert_positions
+    revert_positions(initial_config)
 #---------------------------------------------------
 #---------------------------------------------------
 
@@ -134,5 +142,7 @@ def register_accelerators():
   add_accelerator('fz', 'Flip selected model across x-axis', flipsm_z)
   add_accelerator('lf', 'Fit all selected models to the first one in the selection', loopfitmap)
   add_accelerator('tl', 'Toggle between lineup view and original view', toggle_lineup)
+  add_accelerator('lm','Lineup selected models into a viewing array',lineup_mdls)
+  add_accelerator('rv','Revert positions of selected models to most recent configuration', revert_pos)
 register_accelerators()
 
