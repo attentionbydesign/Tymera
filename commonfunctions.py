@@ -1,3 +1,16 @@
+def dnt():
+    from datetime import datetime
+    dti = datetime.now()
+
+    mo,d,y = dti.month, dti.day, dti.year
+    date = "{}-{}-{}".format(mo,d,y)
+    h,m,s = dti.hour,dti.minute,dti.second
+    time = "{}-{}-{}".format(h,m,s)
+    iso = dti.isoformat()
+
+    #return date + "T" + time
+    return iso
+
 def r2d(filename):
     result_dict = {}
     with open(filename, 'r') as file:
@@ -11,10 +24,32 @@ def r2d(filename):
     file.close()
 
 def wfd(dictobj,dictname):
-    outputdir = 'tymera/ref/'
+    import os
+    tymera_path = os.path.dirname(__file__)
+    outputdir = tymera_path.replace('\\','/') + '/ref/SavedPositions/'
     with open(outputdir + '{}.txt'.format(dictname), 'w') as f:
-    for key, value in dictobj.items():
-        f.write(f"{key}\t{value}\n")
+        for key, value in dictobj.items():
+            f.write("{}\t{}\n".format(key,value))
+
+def wfd_dill(dictobj,filename):
+    import dill, os
+    tymera_path = os.path.dirname(__file__)
+    outputdir = tymera_path.replace('\\','/') + '/ref/SavedPositions/'
+    filepath = outputdir + "{}.dill".format(filename)
+    with open(filepath, 'wb') as f:
+        dill.dump(dictobj, f)
+
+def r2d_dill(filename):
+    import dill, os
+    tymera_path = os.path.dirname(__file__)
+    outputdir = tymera_path.replace('\\','/') + '/ref/SavedPositions/'
+    filepath = outputdir + "{}.dill".format(filename)
+
+    # Load the dictionary back
+    with open(filepath, 'rb') as f:
+        loaded_config = dill.load(f)
+        
+    return loaded_config
 
 
 #-----------------------------------------------------------------
