@@ -1,6 +1,5 @@
-import chimera
-from chimera import openModels as om, Molecule, runCommand
-from tymera.commonfunctions import getKoD
+import chimera,time
+from chimera import openModels as om
 
 def sortOMbyname():
     allmdls = om.list()
@@ -25,7 +24,17 @@ def getSortedPaths(byname=True):
 
 def main():
     opls = getSortedPaths()
-    om.closeAllModels()
+    
+    om.close(om.list())
+
+    counter = 0
+    timeout = 120
+    while counter < timeout:
+        if len(om.list()) == 0:
+            break
+        counter += 1
+        time.sleep(1)
+        
     for mpth in opls:
         om.open(mpth)
 
