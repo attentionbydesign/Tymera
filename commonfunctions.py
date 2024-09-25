@@ -48,8 +48,15 @@ def r2d_dill(filename):
     # Load the dictionary back
     with open(filepath, 'rb') as f:
         loaded_config = dill.load(f)
-        
+
     return loaded_config
+
+#returns key of a value (val) in a dictionary (dict)
+def getKoD(dict,val):
+    for key, value in dict.items():
+        if value == val:
+            return key
+    return None
 
 
 #-----------------------------------------------------------------

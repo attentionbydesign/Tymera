@@ -1,5 +1,6 @@
+import chimera
 from chimera import openModels, Molecule, runCommand
-import os
+from tymera.commonfunctions import getKoD
 
 def list_models(printls=False):
     # Get all open models
@@ -12,7 +13,7 @@ def list_models(printls=False):
     else:
         return models_dict
     
-def reo_byname(models_dict):
+def sortbyname(models_dict):
     reo_dict={}
     idls = [mid for mid in models_dict]
     mdls = [models_dict[mid] for mid in models_dict]
@@ -20,19 +21,34 @@ def reo_byname(models_dict):
     for m in mdls:
         reo_dict[idls[mdls.index(m)]] = m
     return reo_dict
-    
 
-def find_model_file(old_id):
-    model_name = models_dict.get(int(old_id))
-    directory = "C:\PROJECTS\\"
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file == model_name:
-                file_path = os.path.join(root, file)
-                return file_path
+def get_reassignments():
+    current_order = list_models()
+    mdlnames = [current_order[mid] for mid in current_order]
+    sorted_order = sortbyname(current_order)
+
+    reassignments = []
+    for mn in mdlnames:
+        old_key = getKoD(current_order,mn) 
+        new_key = getKoD(sorted_order,mn)
+        if old_key != new_key:
+            print("{} reassigned from #{} to #{}".format(mn, old_key, new_key))  
+            reassignments.append((old_key,new_key))
+    return reassignments
+
+def reassignIDsByName():
+    reassignments = get_reassignments()
+    for old,new in reassignments:
+        reassign_model_id(old,new)
+
+
+def find_model_path(old_id):
+    allmdls = chimera.openModels.list()
+    mdlobj = [m for m in allmdls if m.id == old_id][0]
+    return mdlobj.openedAs[0]
 
 def reassign_model_id(old_id, new_id):
-    model_path = find_model_file(old_id)
+    model_path = find_model_path(old_id)
     if model_path is None:
         print("File Not Found", "Model file corresponding to model ID {} not found.".format(old_id))
         return
@@ -43,7 +59,7 @@ def reoIDbyName():
 
     # Sample dictionaries
     dict1 = list_models()
-    dict2 = reo_byname(dict1)
+    dict2 = sortbyname(dict1)
 
     # Step 1: Get the keys and values
     keys1 = list(dict1.keys())
@@ -71,7 +87,7 @@ def changeModelID():
         old_id=raw_input("Enter CURRENT ID#: ")
         if old_id == 'en':
             break
-        file_path=find_model_file(old_id)
+        file_path=find_model_path(old_id)
         print("Model #"+old_id+" is located at: "+file_path)
         new_id=raw_input("Enter NEW ID#: ")
         if new_id == 'en':
