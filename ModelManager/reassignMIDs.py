@@ -15,6 +15,27 @@ def sortOMbyname():
 
     return sortedmdls
 
+def getSortedPaths(byname=True):
+    sortedmdls = sortOMbyname()
+    openorder = []
+    for mdl in sortedmdls:
+        mdlpath = mdl.openedAs[0]
+        openorder.append(mdlpath)
+    return openorder
+
+def main():
+    opls = getSortedPaths()
+    om.closeAllModels()
+    for mpth in opls:
+        om.open(mpth)
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
 
 
 
