@@ -1,5 +1,6 @@
 import chimera,time
 from chimera import openModels as om
+from tymera.OrientMdls.lineup_view import save_positions,revert_positions
 
 def sortOMbyname():
     allmdls = om.list()
@@ -18,11 +19,13 @@ def getSortedPaths(byname=True):
     sortedmdls = sortOMbyname()
     openorder = []
     for mdl in sortedmdls:
-        mdlpath = mdl.openedAs[0]
-        openorder.append(mdlpath)
+        if hasattr(mdl,'openedAs'):
+            mdlpath = mdl.openedAs[0]
+            openorder.append(mdlpath)
     return openorder
 
 def main():
+    snapshot = save_positions()
     opls = getSortedPaths()
     
     om.close(om.list())
@@ -37,6 +40,8 @@ def main():
         
     for mpth in opls:
         om.open(mpth)
+    
+    revert_positions(snapshot)
 
 if __name__ == '__main__':
     main()

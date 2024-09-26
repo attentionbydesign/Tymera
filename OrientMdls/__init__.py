@@ -70,4 +70,40 @@ def flip_sel(ax_str):
         flip_mdl(m, ax_str)
 
 
+#-------------------------
+def save_positions():
+    from chimera import openModels as om
+    from tymera.commonfunctions import current_selection
+
+    model_positions = {}
+
+    if current_selection():
+        mdls = current_selection()
+    else:
+        mdls = om.list()
+
+    for m in mdls:
+        model_positions[m] = get_position(m)
+
+    return model_positions
+
+def revert_positions(saved_config=None):
+    if current_selection():
+        mdls = current_selection()
+    else:
+        mdls = chimera.openModels.list()
+
+    if saved_config:
+        saved_positions = saved_config #if you pass a dictionary of model:position pairs as an argument
+    elif inital_config:
+        saved_positions = initial_config #i.e., if a globally saved dictionary of positions exists by this name
+    
+    for m in mdls:
+        if m in saved_positions:
+            revertSpatialConfig(m,saved_positions[m])
+    from chimera import runCommand as rc
+    chimera.viewer.viewAll()
+    rc('cofr models')
+
+
     
